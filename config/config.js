@@ -12,4 +12,6 @@ const pool = createPool({
 });
 
 
-module.exports = pool;
+module.exports = {
+    pool
+};

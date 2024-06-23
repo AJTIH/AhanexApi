@@ -1,5 +1,4 @@
-const pool = require('../../config/config.js');
-
+const { pool } = require('../../config/config');
 module.exports = {
     employeeInsert: (data, callBack) => {
 
