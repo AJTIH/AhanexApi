@@ -1,82 +1,8 @@
 const { pool } = require('../../config/config')
 module.exports = {
-    // docmasterInsert: (data, callback) => {
-    //     pool.query(
-    //         `INSERT INTO doctor_master(
-    //          doctor_name, doctor_spectiality, doctor_status, doctor_fee, doctor_token_start, doctor_token_end, doctor_renewal_day
-    //             )
-    //             VALUES(?,?,?,?,?,?,?)`,
-    //         [
-    //             data.doctor_name,
-    //             data.doctor_spectiality,
-    //             data.doctor_status,
-    //             data.doctor_fee,
-    //             data.doctor_token_start,
-    //             data.doctor_token_end,
-    //             data.doctor_renewal_day
-    //         ],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 return callback(error);
-    //             }
-    //             return callback(null, results);
-    //         }
-
-    //     );
-    // },
-
-    // docMasterUpdate: (data, callback) => {
-    //     pool.query(
-    //         `UPDATE doctor_master 
-    //         SET doctor_name=?,
-    //         doctor_spectiality=?,
-    //         doctor_status=?,
-    //         doctor_fee=?,
-    //         doctor_token_start=?,
-    //         doctor_token_end=?,
-    //         doctor_renewal_day=?
-    //         WHERE doctor_slno=? `,
-    //         [
-    //             data.doctor_name,
-    //             data.doctor_spectiality,
-    //             data.doctor_status,
-    //             data.doctor_fee,
-    //             data.doctor_token_start,
-    //             data.doctor_token_end,
-    //             data.doctor_renewal_day,
-    //             data.doctor_slno
-
-    //         ],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 return callback(error);
-    //             }
-    //             return callback(null, results);
-    //         }
-    //     );
-    // },
-    // DocMasterGet: (callback) => {
-    //     pool.query(
-    //         `SELECT doctor_slno,
-    //         doctor_name, doctor_spectiality,doctor_status,
-    //         doctor_fee,doctor_token_start,doctor_token_end,
-    //         doctor_renewal_day,
-    //          if(doctor_status = 1 ,'Yes','No') status1,
-    //          speciality_master.speciality_name
-    //         FROM doctor_master
-    //         left join speciality_master on speciality_master.speciality_slno=doctor_master.doctor_spectiality`,
-    //         [],
-    //         (error, results, fields) => {
-    //             if (error) {
-    //                 return callback(error);
-    //             }
-    //             return callback(null, results);
-    //         }
-    //     );
-    // },
     getProcedureList: (callback) => {
         pool.query(
-            `SELECT procedure_slno,procedure_name         
+            `SELECT procedure_slno,procedure_name   ,procedure_rate      
             FROM procedure_master where procedure_status=1`,
             [],
             (error, results, fields) => {
@@ -88,4 +14,73 @@ module.exports = {
         );
     },
 
+    getProcedureNameRate: (id, callBack) => {
+        pool.query(
+            `SELECT procedure_slno,procedure_name   ,procedure_rate      
+            FROM procedure_master where procedure_slno=?`,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
+            }
+        );
+    },
+    insert: (data, callback) => {
+        pool.query(
+            `INSERT INTO bill_mast (
+                patient_id,
+                bill_date,
+                bill_amount
+               )
+                VALUES(?,?,?)`,
+            [
+                data.patient_id,
+                data.bill_date,
+                data.bill_amount
+            ],
+            (error, results, fields) => {
+
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+    BillDetailsInsert: (data, callback) => {
+        pool.query(
+            `INSERT INTO bill_detail (
+                bill_slno,
+                procedure_slno,procedure_rate,bill_proc_slno
+               )
+               values ?`,
+            [
+                data
+            ],
+            (error, results, fields) => {
+
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+    getBillDetailForPrint: (id, callBack) => {
+        pool.query(
+            `select bill_proc_slno,bill_detail.procedure_rate,procedure_name
+from bill_detail
+left join procedure_master on procedure_master.procedure_slno=bill_detail.procedure_slno
+where bill_slno=?`,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
+            }
+        );
+    },
 }

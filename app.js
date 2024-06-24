@@ -23,12 +23,12 @@ app.use((req, res, next) => {
 const login = require('./api/employee/emp.router')
 const DoctorMaster = require('./api/doctor_master/doctor_master.router')
 const patientRegistration = require('./api/patient_registration/patient_reg.router')
-
+const Billing = require('./api/billing/billing.router')
 
 app.use('/api/login', login)
 app.use('/api/DoctorMaster', DoctorMaster)
 app.use('/api/patientRegistration', patientRegistration)
-
+app.use('/api/Billing', Billing)
 
 app.listen(process.env.APP_PORT, (val) => {
     console.log(`Server Up and Running ${process.env.APP_PORT}`)

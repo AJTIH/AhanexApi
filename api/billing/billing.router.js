@@ -1,12 +1,13 @@
 const router = require("express").Router();
-const { getProcedureList } = require("../billing/billing.controller");
-
-// router.post("/", docmasterInsert);
-
-// router.patch("/", docMasterUpdate);
-
-// router.get("/", DocMasterGet);
+const { getProcedureList, getProcedureNameRate, insert, BillDetailsInsert, getBillDetailForPrint } = require("../billing/billing.controller");
 
 router.get("/getProcedureList", getProcedureList);
+router.get("/getProcedureNameRate/:id", getProcedureNameRate)
+router.post("/insert", insert);
+router.post("/BillDetailsInsert", BillDetailsInsert);
+
+router.get("/getBillDetailForPrint/:id", getBillDetailForPrint)
+
+
 
 module.exports = router;
