@@ -12,7 +12,7 @@ module.exports = {
             }
             return res.status(200).json({
                 success: 1,
-                message: "Doctor Created"
+                message: "Setting Inserted"
             });
         })
     },
@@ -41,14 +41,12 @@ module.exports = {
     SettingMasterGet: (req, res) => {
         SettingMasterGet((err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 2,
                     message: err
                 });
             }
             if (results.length === 0) {
-                logger.infologwindow("No Results Found")
                 return res.status(200).json({
                     success: 0,
                     message: "No Results Found"

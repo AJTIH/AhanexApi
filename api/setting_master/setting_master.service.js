@@ -47,7 +47,7 @@ module.exports = {
     },
     SettingMasterGet: (callback) => {
         pool.query(
-            `SELECT clinic_name, clinic_address, clinic_mobile, reg_renewaldays
+            `SELECT clinic_name, clinic_address, clinic_mobile, reg_renewaldays,master_slno
             FROM setting_master
            `,
             [],
