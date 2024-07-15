@@ -1,4 +1,5 @@
-const { docmasterInsert, docMasterUpdate, DocMasterGet, getSpecialities, searchDctrName
+const { docmasterInsert, docMasterUpdate, DocMasterGet, getSpecialities, searchDctrName,
+    searchprocedureName, searchDctrNProcdrName
 
 } = require("../doctor_master/doctor_master.service");
 
@@ -88,6 +89,54 @@ module.exports = {
     searchDctrName: (req, res) => {
         const body = req.body
         searchDctrName(body, (err, results) => {
+            if (err) {
+                logger.logwindow(err)
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length == 0) {
+                return res.status(200).json({
+                    success: 0,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        })
+    },
+    searchprocedureName: (req, res) => {
+        const body = req.body
+        searchprocedureName(body, (err, results) => {
+            if (err) {
+                logger.logwindow(err)
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length == 0) {
+                return res.status(200).json({
+                    success: 0,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        })
+    },
+    searchDctrNProcdrName: (req, res) => {
+        const body = req.body
+        searchDctrNProcdrName(body, (err, results) => {
             if (err) {
                 logger.logwindow(err)
                 return res.status(200).json({

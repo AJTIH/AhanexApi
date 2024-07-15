@@ -1,6 +1,6 @@
 const { pateintInsert, patientIdUpdate, patientUpdate, patientgeting, PatientIdget, DocGettingBySpeciality,
     getDoctortokenDetail, getDoctorFeeDetail, visitMasterInsert, PatientDetailsGtting, lastVisitingDate,
-    lastInsertVistForPrint
+    lastInsertVistForPrint, searchprocedureName
 } = require("../patient_registration/patient_reg.service");
 
 module.exports = {
@@ -258,5 +258,29 @@ module.exports = {
                 data: results
             });
         });
+    },
+    searchprocedureName: (req, res) => {
+        const body = req.body
+        searchprocedureName(body, (err, results) => {
+            if (err) {
+                logger.logwindow(err)
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length == 0) {
+                return res.status(200).json({
+                    success: 0,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        })
     },
 }
