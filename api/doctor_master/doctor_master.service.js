@@ -87,5 +87,75 @@ module.exports = {
             }
         );
     },
+    searchDctrName: (data, callback) => {
+        pool.query(
+            `SELECT doctor_slno,
+            doctor_name, doctor_spectiality,doctor_status,
+            doctor_fee,doctor_token_start,doctor_token_end,
+            doctor_renewal_day,
+             if(doctor_status = 1 ,'Yes','No') status1,
+             speciality_master.speciality_name
+            FROM doctor_master
+            left join speciality_master on speciality_master.speciality_slno=doctor_master.doctor_spectiality
+            where doctor_name like ?`,
+            [
+                '%' + data.doctor_name + '%'
 
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+
+    searchprocedureName: (data, callback) => {
+        pool.query(
+            `SELECT doctor_slno,
+            doctor_name, doctor_spectiality,doctor_status,
+            doctor_fee,doctor_token_start,doctor_token_end,
+            doctor_renewal_day,
+             if(doctor_status = 1 ,'Yes','No') status1,
+             speciality_master.speciality_name
+            FROM doctor_master
+            left join speciality_master on speciality_master.speciality_slno=doctor_master.doctor_spectiality
+            where speciality_name like ?`,
+            [
+                '%' + data.speciality_name + '%'
+
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+
+    searchDctrNProcdrName: (data, callback) => {
+        pool.query(
+            `SELECT doctor_slno,
+            doctor_name, doctor_spectiality,doctor_status,
+            doctor_fee,doctor_token_start,doctor_token_end,
+            doctor_renewal_day,
+             if(doctor_status = 1 ,'Yes','No') status1,
+             speciality_master.speciality_name
+            FROM doctor_master
+            left join speciality_master on speciality_master.speciality_slno=doctor_master.doctor_spectiality
+            where doctor_name like ? and speciality_name like ?`,
+            [
+                '%' + data.doctor_name + '%',
+                '%' + data.speciality_name + '%'
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
 }
