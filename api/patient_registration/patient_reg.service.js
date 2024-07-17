@@ -235,7 +235,7 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
         );
     },
 
-    searchprocedureName: (data, callback) => {
+    searchpatientName: (data, callback) => {
         pool.query(
             `select patient_slno, patient_id, salutation, patient_name,
             patient_address, patient_place, patient_pincode, patient_district,
@@ -254,5 +254,42 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
             }
         );
     },
+    searchmobileNo: (data, callback) => {
+        pool.query(
+            `select patient_slno, patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            from patient_registration
+            where patient_mobile like ?`,
+            [
+                '%' + data.patient_mobile + '%'
 
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+    searchAddress: (data, callback) => {
+        pool.query(
+            `select patient_slno, patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            from patient_registration
+            where patient_address like ?`,
+            [
+                '%' + data.patient_address + '%'
+
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
 }
