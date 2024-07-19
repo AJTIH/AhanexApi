@@ -1,22 +1,34 @@
-const { procdremasterInsert, procdreMasterUpdate, procdreMasterGet, searchprocedureName
+const { procdremasterInsert, procdreMasterUpdate, procdreMasterGet, searchprocedureName,
+    checkInsertVal
 } = require("../procedure_master/procedure_mast.service");
 
 module.exports = {
     procdremasterInsert: (req, res) => {
         const body = req.body;
-        procdremasterInsert(body, (err, results) => {
-            if (err) {
+        checkInsertVal(body, (err, results) => {
+            const value = JSON.parse(JSON.stringify(results))
+            if (Object.keys(value).length === 0) {
+                procdremasterInsert(body, (err, results) => {
+                    if (err) {
+                        return res.status(200).json({
+                            success: 0,
+                            message: err
+                        });
+                    }
+                    return res.status(200).json({
+                        success: 1,
+                        message: "Procedure Created"
+                    });
+                })
+            } else {
                 return res.status(200).json({
-                    success: 0,
-                    message: err
+                    success: 3,
+                    message: "Procedure Name already exist"
                 });
             }
-            return res.status(200).json({
-                success: 1,
-                message: "Procedure Created"
-            });
         })
     },
+
     procdreMasterUpdate: (req, res) => {
         const body = req.body;
         procdreMasterUpdate(body, (err, results) => {

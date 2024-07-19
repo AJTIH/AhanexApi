@@ -3,10 +3,11 @@ module.exports = {
     procdremasterInsert: (data, callback) => {
         pool.query(
             `INSERT INTO procedure_master(
-             procedure_name, procedure_rate, procedure_status)
-                VALUES(?,?,?)`,
+             procedure_name,procedure_code, procedure_rate, procedure_status)
+                VALUES(?,?,?,?)`,
             [
                 data.procedure_name,
+                data.procedure_code,
                 data.procedure_rate,
                 data.procedure_status
             ],
@@ -19,16 +20,33 @@ module.exports = {
 
         );
     },
-
+    checkInsertVal: (data, callBack) => {
+        pool.query(
+            `SELECT procedure_name
+            FROM procedure_master
+            WHERE procedure_name = ?`,
+            [
+                data.procedure_name
+            ],
+            (error, results, feilds) => {
+                if (error) {
+                    return callBack(error)
+                }
+                return callBack(null, results)
+            }
+        )
+    },
     procdreMasterUpdate: (data, callback) => {
         pool.query(
             `UPDATE procedure_master 
             SET procedure_name=?,
+            procedure_code=?,
             procedure_rate=?,
             procedure_status=?
             WHERE procedure_slno=? `,
             [
                 data.procedure_name,
+                data.procedure_code,
                 data.procedure_rate,
                 data.procedure_status,
                 data.procedure_slno
@@ -44,7 +62,7 @@ module.exports = {
     },
     procdreMasterGet: (callback) => {
         pool.query(
-            `select procedure_slno, procedure_name, procedure_rate, procedure_status,
+            `select procedure_slno, procedure_name,procedure_code, procedure_rate, procedure_status,
             if(procedure_status = 1 ,'Yes','No') status1
             from procedure_master`,
             [],
@@ -58,7 +76,7 @@ module.exports = {
     },
     searchprocedureName: (data, callback) => {
         pool.query(
-            `select procedure_slno, procedure_name, procedure_rate, procedure_status,
+            `select procedure_slno, procedure_name,procedure_code, procedure_rate, procedure_status,
             if(procedure_status = 1 ,'Yes','No') status1
             from procedure_master
             where procedure_name like ?`,
