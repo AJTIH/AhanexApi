@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const { pateintInsert, patientUpdate, patientgeting, PatientIdget, DocGettingBySpeciality, getDoctortokenDetail,
     getDoctorFeeDetail, visitMasterInsert, PatientDetailsGtting, lastVisitingDate, lastInsertVistForPrint,
-    searchpatientName, searchmobileNo, searchAddress
+    searchpatientName, searchmobileNo, searchAddress, searchById, searchNameAddress,
+    searchNameMobile
 } = require("../patient_registration/patient_reg.controller");
 
 router.post("/", pateintInsert);
@@ -17,8 +18,11 @@ router.get("/PatientDetailsGtting/:id", PatientDetailsGtting)
 router.post("/lastVisitingDate", lastVisitingDate)
 
 router.get("/lastInsertVistForPrint/:id", lastInsertVistForPrint)
-router.post("/searchprocedureName", searchpatientName)
+router.post("/searchpatientName", searchpatientName)
 router.post("/searchmobileNo", searchmobileNo)
 router.post("/searchAddress", searchAddress)
+router.post("/searchById", searchById)
+router.post("/searchNameAddress", searchNameAddress)
+router.post("/searchNameMobile", searchNameMobile)
 
 module.exports = router;

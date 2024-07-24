@@ -1,6 +1,7 @@
 const { pateintInsert, patientIdUpdate, patientUpdate, patientgeting, PatientIdget, DocGettingBySpeciality,
     getDoctortokenDetail, getDoctorFeeDetail, visitMasterInsert, PatientDetailsGtting, lastVisitingDate,
-    lastInsertVistForPrint, searchpatientName, searchmobileNo, searchAddress
+    lastInsertVistForPrint, searchpatientName, searchmobileNo, searchAddress, searchById,
+    searchNameAddress, searchNameMobile
 } = require("../patient_registration/patient_reg.service");
 
 module.exports = {
@@ -61,14 +62,14 @@ module.exports = {
     patientgeting: (req, res) => {
         patientgeting((err, results) => {
             if (err) {
-                logger.logwindow(err)
+
                 return res.status(200).json({
                     success: 2,
                     message: err
                 });
             }
             if (results.length === 0) {
-                logger.infologwindow("No Results Found")
+
                 return res.status(200).json({
                     success: 0,
                     message: "No Results Found"
@@ -83,14 +84,14 @@ module.exports = {
     PatientIdget: (req, res) => {
         PatientIdget((err, results) => {
             if (err) {
-                logger.logwindow(err)
+
                 return res.status(200).json({
                     success: 2,
                     message: err
                 });
             }
             if (results.length === 0) {
-                logger.infologwindow("No Results Found")
+
                 return res.status(200).json({
                     success: 0,
                     message: "No Results Found"
@@ -106,7 +107,7 @@ module.exports = {
         const id = req.params.id;
         DocGettingBySpeciality(id, (err, results) => {
             if (err) {
-                logger.logwindow(err)
+
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -130,7 +131,6 @@ module.exports = {
         const id = req.params.id;
         getDoctortokenDetail(id, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -153,7 +153,6 @@ module.exports = {
         const id = req.params.id;
         getDoctorFeeDetail(id, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -192,7 +191,6 @@ module.exports = {
         const id = req.params.id;
         PatientDetailsGtting(id, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -215,7 +213,6 @@ module.exports = {
         const body = req.body
         lastVisitingDate(body, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -223,7 +220,6 @@ module.exports = {
             }
 
             if (results.length == 0) {
-                logger.infologwindow("No Results Found")
                 return res.status(200).json({
                     success: 0,
                     message: "No Record Found"
@@ -240,7 +236,6 @@ module.exports = {
         const id = req.params.id;
         lastInsertVistForPrint(id, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -263,7 +258,6 @@ module.exports = {
         const body = req.body
         searchpatientName(body, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -287,7 +281,6 @@ module.exports = {
         const body = req.body
         searchmobileNo(body, (err, results) => {
             if (err) {
-                logger.logwindow(err)
                 return res.status(200).json({
                     success: 0,
                     message: err
@@ -311,7 +304,75 @@ module.exports = {
         const body = req.body
         searchAddress(body, (err, results) => {
             if (err) {
-                logger.logwindow(err)
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length == 0) {
+                return res.status(200).json({
+                    success: 0,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        })
+    },
+    searchById: (req, res) => {
+        const body = req.body
+        searchById(body, (err, results) => {
+            if (err) {
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length == 0) {
+                return res.status(200).json({
+                    success: 0,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        })
+    },
+    searchNameAddress: (req, res) => {
+        const body = req.body
+        searchNameAddress(body, (err, results) => {
+            if (err) {
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length == 0) {
+                return res.status(200).json({
+                    success: 0,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        })
+    },
+    searchNameMobile: (req, res) => {
+        const body = req.body
+        searchNameMobile(body, (err, results) => {
+            if (err) {
                 return res.status(200).json({
                     success: 0,
                     message: err
