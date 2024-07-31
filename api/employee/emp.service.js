@@ -1,20 +1,25 @@
 const { pool } = require('../../config/config');
 module.exports = {
     employeeInsert: (data, callBack) => {
-
         pool.query(
             `INSERT INTO hrm_employee 
-                (us_code,usc_name,usc_pass,usc_alias,usc_first_name,usc_active,user_group_id) 
+                (usc_first_name,usc_second_name,usc_address,usc_name,usc_pass,us_code,usc_mobileno,
+                usc_dob,usc_active,usc_alias,user_group_id,usc_doj)
             VALUES 
-                (?,?,?,?,?,?,?)`,
+                (?,?,?,?,?,?,?,?,?,?,?,?)`,
             [
-                data.us_code,
+                data.usc_first_name,
+                data.usc_second_name,
+                data.usc_address,
                 data.usc_name,
                 data.usc_pass,
-                data.usc_alias,
-                data.usc_first_name,
+                data.us_code,
+                data.usc_mobileno,
+                data.usc_dob,
                 data.usc_active,
-                data.user_group_id
+                data.usc_alias,
+                data.user_group_id,
+                data.usc_doj
             ],
             (error, results, feilds) => {
                 if (error) {
@@ -41,8 +46,11 @@ module.exports = {
     },
     getEmployee: (callBack) => {
         pool.query(
-            `SELECT emp_slno,us_code,usc_name,usc_pass,usc_alias,usc_first_name,usc_active,user_group.user_group_name,hrm_employee.user_group_id FROM hrm_employee
-            left join user_group on user_group.user_group_id=hrm_employee.user_group_id order by hrm_employee.usc_name`,
+            `
+            SELECT emp_slno,us_code,usc_name,usc_pass,usc_alias,usc_first_name
+            ,usc_active,user_group.user_group_name,hrm_employee.user_group_id FROM hrm_employee
+            left join user_group on user_group.user_group_slno=hrm_employee.user_group_id
+            order by hrm_employee.usc_name`,
             [],
             (error, results, feilds) => {
                 if (error) {
@@ -56,8 +64,12 @@ module.exports = {
 
     viewEmployee: (callBack) => {
         pool.query(
-            `SELECT emp_slno,usc_name,usc_alias,usc_first_name,usc_active,user_group.user_group_name FROM hrm_employee
-            left join user_group on user_group.user_group_id=hrm_employee.user_group_id`,
+            `SELECT emp_slno, us_code, usc_name, usc_pass, usc_alias, usc_first_name,
+            usc_second_name, usc_active, user_group_id, usc_mobileno, usc_dob, usc_doj, usc_address,
+            user_group_name,
+             if(usc_active = 1 ,'Yes','No') status1 
+            FROM hrm_employee
+            left join user_group on user_group.user_group_slno=hrm_employee.user_group_id`,
             [],
             (error, results, feilds) => {
                 if (error) {
@@ -121,19 +133,31 @@ module.exports = {
         pool.query(
             `UPDATE hrm_employee
                 SET 
-                    usc_name = ?,
-                    usc_alias = ?,
                     usc_first_name = ?,
-                    usc_active = ?,
-                    user_group_id=?
-                WHERE emp_slno = ?`,
+                    usc_second_name = ?,
+                    usc_address = ?,
+                    usc_name = ?,
+                    usc_pass = ?,
+                    usc_mobileno = ?,
+                    usc_dob = ?,
+                    usc_active=?,
+                    usc_alias=?,
+                    user_group_id=?,
+                    usc_doj=?
+                WHERE us_code = ?`,
             [
-                data.usc_name,
-                data.usc_alias,
                 data.usc_first_name,
+                data.usc_second_name,
+                data.usc_address,
+                data.usc_name,
+                data.usc_pass,
+                data.usc_mobileno,
+                data.usc_dob,
                 data.usc_active,
+                data.usc_alias,
                 data.user_group_id,
-                data.emp_slno
+                data.usc_doj,
+                data.us_code
             ],
             (error, results, feilds) => {
                 if (error) {
@@ -207,5 +231,47 @@ module.exports = {
         );
 
     },
+    getEmpSerialNo: (callBack) => {
+        pool.query(
+            `
+            SELECT patient_no FROM serial_no where serial_slno=2`,
+            [],
+            (error, results, feilds) => {
+                if (error) {
+                    return callBack(error);
+                }
+                return callBack(null, results);
+            }
+        );
+    },
+    userGroupget: (callBack) => {
+        pool.query(
+            `
+                 select user_group_slno,user_group_name
+                from user_group
+                where user_group_status=1`,
+            [],
+            (error, results, feilds) => {
+                if (error) {
+                    return callBack(error);
+                }
+                return callBack(null, results);
+            }
+        );
+    },
 
+    employeeSerialNoUpdate: (callBack) => {
+        pool.query(
+            `update serial_no
+             set patient_no=patient_no+1 where serial_slno=2`,
+            [],
+            (error, results, feilds) => {
+                if (error) {
+                    return callBack(error);
+                }
+                return callBack(null, results);
+            }
+        )
+
+    },
 }

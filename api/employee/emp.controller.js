@@ -11,20 +11,21 @@ const { employeeDelete,
     EmployeeAlreadyExist,
     searchEmployee,
     viewEmployee,
-    getMenuRights }
+    getMenuRights, getEmpSerialNo, userGroupget, employeeSerialNoUpdate }
     = require("../employee/emp.service");
 
 const { add } = require("date-fns");
 
 module.exports = {
+
     employeeInsert: (req, res) => {
         const body = req.body;
         EmployeeAlreadyExist(body, (err, results) => {
             const value = JSON.parse(JSON.stringify(results))
             if (Object.keys(value).length === 0) {
-                const salt = genSaltSync(10);
-                let usc_pass = body.usc_pass;
-                body.usc_pass = hashSync(usc_pass, salt);
+                // const salt = genSaltSync(10);
+                // let usc_pass = body.usc_pass;
+                // body.usc_pass = hashSync(usc_pass, salt);
 
                 employeeInsert(body, (err, results) => {
                     if (err) {
@@ -33,11 +34,28 @@ module.exports = {
                             message: err.message
                         });
                     }
+                    employeeSerialNoUpdate((err, results) => {
 
-                    return res.status(200).json({
-                        success: 1,
-                        message: "User Created Successfully"
-                    })
+                        if (err) {
+                            return res.status(200).json({
+                                success: 0,
+                                message: err
+                            });
+                        }
+                        if (!results) {
+                            return res.json({
+                                success: 2,
+                                message: "Failed to Update Serial No"
+                            });
+                        }
+                        return res.status(200).json({
+                            success: 1,
+                            message: "User Created Successfully"
+                        })
+                    });
+
+
+
                 })
             }
             else {
@@ -156,12 +174,12 @@ module.exports = {
             }
             if (!results) {
                 return res.json({
-                    success: 1,
+                    success: 2,
                     message: "Failed to Update"
                 });
             }
             return res.status(200).json({
-                success: 2,
+                success: 1,
                 message: "Data Updated Successfully"
             });
         });
@@ -271,4 +289,49 @@ module.exports = {
         });
     },
 
+
+    getEmpSerialNo: (req, res) => {
+        getEmpSerialNo((err, results) => {
+            if (err) {
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(200).json({
+                    success: 1,
+                    message: "No Results Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 2,
+                data: results
+            });
+        });
+    },
+    userGroupget: (req, res) => {
+        userGroupget((err, results) => {
+            if (err) {
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+
+            if (results.length === 0) {
+                return res.status(200).json({
+                    success: 1,
+                    message: "No Results Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 2,
+                data: results
+            });
+        });
+    },
 }

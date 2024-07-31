@@ -11,7 +11,7 @@ const {
     login,
     searchEmployee,
     viewEmployee,
-    getMenuRights
+    getMenuRights, getEmpSerialNo, userGroupget
 } = require('../employee/emp.controller');
 
 router.post('/login', login);
@@ -24,5 +24,9 @@ router.get('/:id', employeeGetById);
 router.delete('/', employeeDelete);
 router.post('/search', searchEmployee);
 router.get('/getmenu/:id', getMenuRights);
+router.get('/emp/Serialno', getEmpSerialNo);
+router.get('/emp/userGroupget', userGroupget);
+
+
 
 module.exports = router;
