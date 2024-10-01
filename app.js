@@ -26,6 +26,9 @@ const patientRegistration = require('./api/patient_registration/patient_reg.rout
 const Billing = require('./api/billing/billing.router')
 const settingMaster = require('./api/setting_master/setting_master.router')
 const ProcedurMaster = require('./api/procedure_master/procedure_mast.router')
+const Appoinments = require('./api/appoinments/appoinment.router')
+const ProcedurCatMaster = require('./api/procedure__category_mast/procedure_catgry.router')
+const Reports = require('./api/reports/reports.router')
 
 
 app.use('/api/login', login)
@@ -34,6 +37,9 @@ app.use('/api/patientRegistration', patientRegistration)
 app.use('/api/Billing', Billing)
 app.use('/api/settingMaster', settingMaster)
 app.use('/api/ProcedurMaster', ProcedurMaster)
+app.use('/api/Appoinments', Appoinments)
+app.use('/api/ProcedurCatMaster', ProcedurCatMaster)
+app.use('/api/Reports', Reports)
 
 app.listen(process.env.APP_PORT, (val) => {
     console.log(`Server Up and Running ${process.env.APP_PORT}`)

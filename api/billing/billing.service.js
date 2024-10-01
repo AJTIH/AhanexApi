@@ -32,13 +32,15 @@ module.exports = {
             `INSERT INTO bill_mast (
                 patient_id,
                 bill_date,
-                bill_amount
+                bill_amount,
+                bill_payment_mode
                )
-                VALUES(?,?,?)`,
+                VALUES(?,?,?,?)`,
             [
                 data.patient_id,
                 data.bill_date,
-                data.bill_amount
+                data.bill_amount,
+                data.bill_payment_mode
             ],
             (error, results, fields) => {
 
@@ -71,9 +73,23 @@ module.exports = {
     getBillDetailForPrint: (id, callBack) => {
         pool.query(
             `select bill_proc_slno,bill_detail.procedure_rate,procedure_name
-from bill_detail
-left join procedure_master on procedure_master.procedure_slno=bill_detail.procedure_slno
-where bill_slno=?`,
+            from bill_detail
+            left join procedure_master on procedure_master.procedure_slno=bill_detail.procedure_slno
+            where bill_slno=?`,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
+            }
+        );
+    },
+    getProcedureBsedOnCode: (id, callBack) => {
+        pool.query(
+            `select procedure_slno,procedure_name
+            from procedure_master
+            where procedure_code=?`,
             [id],
             (error, results, fields) => {
                 if (error) {

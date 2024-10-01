@@ -1,10 +1,13 @@
 const { pool } = require('../../config/config')
 module.exports = {
-    searchpatientName: (data, callback) => {
+    getAppoinmentsfmVisitMast: (data, callback) => {
         pool.query(
-            `select  patient_id, visit_date, doctor_slno, token_no, fee, status
+            `select visit_mast_slno, visit_master.patient_id, visit_date, doctor_slno, token_no, fee, status,
+              salutation, patient_name, patient_address, 
+             patient_mobile,  patient_age,uhid
             from visit_master
-            where visit_date=? and doctor_slno=?`,
+            left join patient_registration on patient_registration.patient_id=visit_master.patient_id
+            where visit_date=? and doctor_slno=? and cancel_status is null`,
             [
                 data.visit_date,
                 data.doctor_slno
@@ -18,5 +21,91 @@ module.exports = {
             }
         );
     },
+    getDoctrTokenStartEnd: (id, callBack) => {
+        pool.query(
+            `select doctor_token_start,doctor_token_end
+            from doctor_master
+            where doctor_slno=?`,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
+            }
+        );
+    },
+    DoctListWithSpecality: (callback) => {
+        pool.query(
+            `select doctor_slno,doctor_name,speciality_name
+            from doctor_master
+            left join speciality_master on speciality_master.speciality_slno=doctor_master.doctor_spectiality
+            where doctor_status=1`,
+            [],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+    visitMasterAppoinmentInsert: (data, callback) => {
+        pool.query(
+            `INSERT INTO visit_master( patient_id, visit_date, doctor_slno, token_no,fee,status )
+                VALUES(?,?,?,?,?,?)`,
+            [
+                data.patient_id,
+                data.visit_date,
+                data.doctor_slno,
+                data.token_no,
+                data.fee,
+                0
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
 
+        );
+    },
+    updateAppoinmentSave: (data, callback) => {
+        pool.query(
+            `UPDATE visit_master 
+            SET status=1            
+            WHERE patient_id=? and doctor_slno=? and visit_date=current_date()`,
+            [
+                data.patient_id,
+                data.doctor_slno
+
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
+    updateCancelAppoinment: (data, callback) => {
+        pool.query(
+            `UPDATE visit_master 
+            SET cancel_status=1 ,
+                       cancel_reason=?
+            WHERE visit_mast_slno=? `,
+            [
+                data.cancel_reason,
+                data.visit_mast_slno
+
+            ],
+            (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+                return callback(null, results);
+            }
+        );
+    },
 }

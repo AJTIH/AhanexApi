@@ -1,14 +1,14 @@
-const { procdremasterInsert, procdreMasterUpdate, procdreMasterGet, searchprocedureName,
-    checkInsertVal, getProcedureByCatgry
-} = require("../procedure_master/procedure_mast.service");
+const { procdreCatmasterInsert, procdreCatMasterUpdate, procdreCatMasterGet,
+    checkInsertVal, getProcedureCatgryList
+} = require("../procedure__category_mast/procedure_categry.service");
 
 module.exports = {
-    procdremasterInsert: (req, res) => {
+    procdreCatmasterInsert: (req, res) => {
         const body = req.body;
         checkInsertVal(body, (err, results) => {
             const value = JSON.parse(JSON.stringify(results))
             if (Object.keys(value).length === 0) {
-                procdremasterInsert(body, (err, results) => {
+                procdreCatmasterInsert(body, (err, results) => {
                     if (err) {
                         return res.status(200).json({
                             success: 0,
@@ -29,9 +29,9 @@ module.exports = {
         })
     },
 
-    procdreMasterUpdate: (req, res) => {
+    procdreCatMasterUpdate: (req, res) => {
         const body = req.body;
-        procdreMasterUpdate(body, (err, results) => {
+        procdreCatMasterUpdate(body, (err, results) => {
             if (err) {
                 res.status(200).json({
                     success: 0,
@@ -51,8 +51,8 @@ module.exports = {
             });
         })
     },
-    procdreMasterGet: (req, res) => {
-        procdreMasterGet((err, results) => {
+    procdreCatMasterGet: (req, res) => {
+        procdreCatMasterGet((err, results) => {
             if (err) {
                 logger.logwindow(err)
                 return res.status(200).json({
@@ -73,48 +73,22 @@ module.exports = {
             });
         });
     },
-
-    searchprocedureName: (req, res) => {
-        const body = req.body
-        searchprocedureName(body, (err, results) => {
+    getProcedureCatgryList: (req, res) => {
+        getProcedureCatgryList((err, results) => {
             if (err) {
                 logger.logwindow(err)
                 return res.status(200).json({
-                    success: 0,
-                    message: err
-                });
-            }
-
-            if (results.length == 0) {
-                return res.status(200).json({
-                    success: 0,
-                    message: "No Record Found"
-                });
-            }
-
-            return res.status(200).json({
-                success: 1,
-                data: results
-            });
-        })
-    },
-    getProcedureByCatgry: (req, res) => {
-        const id = req.params.id;
-        getProcedureByCatgry(id, (err, results) => {
-            if (err) {
-                logger.logwindow(err)
-                return res.status(200).json({
-                    success: 0,
+                    success: 2,
                     message: err
                 });
             }
             if (results.length === 0) {
+                logger.infologwindow("No Results Found")
                 return res.status(200).json({
-                    success: 2,
-                    message: "No Record Found"
+                    success: 0,
+                    message: "No Results Found"
                 });
             }
-
             return res.status(200).json({
                 success: 1,
                 data: results

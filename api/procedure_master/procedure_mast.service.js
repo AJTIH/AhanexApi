@@ -3,13 +3,14 @@ module.exports = {
     procdremasterInsert: (data, callback) => {
         pool.query(
             `INSERT INTO procedure_master(
-             procedure_name,procedure_code, procedure_rate, procedure_status)
-                VALUES(?,?,?,?)`,
+             procedure_name,procedure_code, procedure_rate, procedure_status,procedure_catgry_slno)
+                VALUES(?,?,?,?,?)`,
             [
                 data.procedure_name,
                 data.procedure_code,
                 data.procedure_rate,
-                data.procedure_status
+                data.procedure_status,
+                data.procedure_catgry_slno
             ],
             (error, results, fields) => {
                 if (error) {
@@ -42,13 +43,15 @@ module.exports = {
             SET procedure_name=?,
             procedure_code=?,
             procedure_rate=?,
-            procedure_status=?
+            procedure_status=?,
+            procedure_catgry_slno=?
             WHERE procedure_slno=? `,
             [
                 data.procedure_name,
                 data.procedure_code,
                 data.procedure_rate,
                 data.procedure_status,
+                data.procedure_catgry_slno,
                 data.procedure_slno
 
             ],
@@ -62,9 +65,10 @@ module.exports = {
     },
     procdreMasterGet: (callback) => {
         pool.query(
-            `select procedure_slno, procedure_name,procedure_code, procedure_rate, procedure_status,
-            if(procedure_status = 1 ,'Yes','No') status1
-            from procedure_master`,
+            `select procedure_slno, procedure_name,procedure_code, procedure_rate, procedure_status,procedure_catgry_mast.procedure_catgry_slno,
+            if(procedure_status = 1 ,'Yes','No') status1,procedure_catgry_name
+            from procedure_master
+            left join procedure_catgry_mast on procedure_catgry_mast.procedure_catgry_slno=procedure_master.procedure_catgry_slno`,
             [],
             (error, results, fields) => {
                 if (error) {
@@ -76,9 +80,10 @@ module.exports = {
     },
     searchprocedureName: (data, callback) => {
         pool.query(
-            `select procedure_slno, procedure_name,procedure_code, procedure_rate, procedure_status,
-            if(procedure_status = 1 ,'Yes','No') status1
+            `select procedure_slno, procedure_name,procedure_code, procedure_rate, procedure_status,procedure_catgry_mast.procedure_catgry_slno,
+            if(procedure_status = 1 ,'Yes','No') status1,procedure_catgry_name
             from procedure_master
+              left join procedure_catgry_mast on procedure_catgry_mast.procedure_catgry_slno=procedure_master.procedure_catgry_slno
             where procedure_name like ?`,
             [
                 '%' + data.procedure_name + '%'
@@ -93,5 +98,20 @@ module.exports = {
         );
     },
 
+
+    getProcedureByCatgry: (id, callBack) => {
+        pool.query(
+            `select procedure_slno,procedure_name
+            from procedure_master
+            where procedure_catgry_slno=?`,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
+            }
+        );
+    },
 
 }

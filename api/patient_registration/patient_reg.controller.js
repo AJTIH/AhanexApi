@@ -1,7 +1,7 @@
 const { pateintInsert, patientIdUpdate, patientUpdate, patientgeting, PatientIdget, DocGettingBySpeciality,
     getDoctortokenDetail, getDoctorFeeDetail, visitMasterInsert, PatientDetailsGtting, lastVisitingDate,
     lastInsertVistForPrint, searchpatientName, searchmobileNo, searchAddress, searchById,
-    searchNameAddress, searchNameMobile
+    searchNameAddress, searchNameMobile, getAppoinmentVisitToday, getLastRegistrationRenewal
 } = require("../patient_registration/patient_reg.service");
 
 module.exports = {
@@ -391,5 +391,49 @@ module.exports = {
                 data: results
             });
         })
+    },
+    getAppoinmentVisitToday: (req, res) => {
+        const id = req.params.id;
+        getAppoinmentVisitToday(id, (err, results) => {
+            if (err) {
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+            if (results.length === 0) {
+                return res.status(200).json({
+                    success: 2,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        });
+    },
+    getLastRegistrationRenewal: (req, res) => {
+        const id = req.params.id;
+        getLastRegistrationRenewal(id, (err, results) => {
+            if (err) {
+                return res.status(200).json({
+                    success: 0,
+                    message: err
+                });
+            }
+            if (results.length === 0) {
+                return res.status(200).json({
+                    success: 2,
+                    message: "No Record Found"
+                });
+            }
+
+            return res.status(200).json({
+                success: 1,
+                data: results
+            });
+        });
     },
 }

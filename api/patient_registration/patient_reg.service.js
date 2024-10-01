@@ -4,8 +4,8 @@ module.exports = {
         pool.query(
             `INSERT INTO patient_registration(
             patient_id, salutation, patient_name, patient_address, patient_place, patient_pincode, patient_district, patient_mobile,
-              patient_dob, patient_age,patient_month,patient_day )
-                VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+              patient_dob, patient_age,patient_month,patient_day,uhid ,old_uhid)
+                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
             [
                 data.patient_id,
                 data.salutation,
@@ -18,7 +18,9 @@ module.exports = {
                 data.patient_dob,
                 data.patient_age,
                 data.patient_month,
-                data.patient_day
+                data.patient_day,
+                data.uhid,
+                data.old_uhid
             ],
             (error, results, fields) => {
                 if (error) {
@@ -59,8 +61,9 @@ module.exports = {
             patient_dob=?,
             patient_age=?,
             patient_month=?,
-            patient_day=?
-            WHERE patient_slno=? `,
+            patient_day=?,
+            old_uhid=?
+            WHERE patient_id=? `,
             [
                 data.salutation,
                 data.patient_name,
@@ -73,7 +76,8 @@ module.exports = {
                 data.patient_age,
                 data.patient_month,
                 data.patient_day,
-                data.patient_slno
+                data.old_uhid,
+                data.patient_id
 
             ],
             (error, results, fields) => {
@@ -121,7 +125,7 @@ module.exports = {
         pool.query(
             `SELECT doctor_slno,doctor_name,doctor_fee       
             FROM doctor_master
-            WHERE doctor_spectiality=?`,
+            WHERE doctor_spectiality=? and doctor_status=1`,
             [id],
             (error, results, fields) => {
                 if (error) {
@@ -165,14 +169,17 @@ module.exports = {
     },
     visitMasterInsert: (data, callback) => {
         pool.query(
-            `INSERT INTO visit_master( patient_id, visit_date, doctor_slno, token_no,fee )
-                VALUES(?,?,?,?,?)`,
+            `INSERT INTO visit_master( patient_id, visit_date, doctor_slno, token_no,fee,status ,registration_fee,payment_mode_visit)
+                VALUES(?,?,?,?,?,?,?,?)`,
             [
                 data.patient_id,
                 data.visit_date,
                 data.doctor_slno,
                 data.token_no,
-                data.fee
+                data.fee,
+                1,
+                data.registration_fee,
+                data.payment_mode_visit
             ],
             (error, results, fields) => {
                 if (error) {
@@ -185,9 +192,9 @@ module.exports = {
     },
     PatientDetailsGtting: (id, callBack) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name, patient_address, patient_place,
+            `select  patient_id, salutation, patient_name, patient_address, patient_place,
  patient_pincode, patient_district, patient_mobile, patient_dob, patient_age, patient_month,
- patient_day
+ patient_day,uhid,old_uhid
  from patient_registration
  where patient_id=?`,
             [id],
@@ -218,13 +225,14 @@ where patient_id=? and doctor_slno=?`,
     },
     lastInsertVistForPrint: (id, callBack) => {
         pool.query(
-            `select visit_mast_slno,visit_master.patient_id, visit_date,  token_no, fee,
-  salutation, patient_name, patient_address, patient_place, patient_pincode, patient_district,
- patient_mobile, patient_dob, patient_age, patient_month, patient_day,doctor_name
-from visit_master
-left join patient_registration on patient_registration.patient_id=visit_master.patient_id
-left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
- where visit_mast_slno=?`,
+            `select visit_mast_slno,patient_registration.patient_id, visit_date,  token_no, fee,
+                salutation, patient_name, patient_address, patient_place, patient_pincode, patient_district,
+                patient_mobile, patient_dob, patient_age, patient_month, patient_day,doctor_name,
+                patient_registration.uhid,patient_registration.old_uhid
+            from visit_master
+            left join patient_registration on patient_registration.patient_id=visit_master.patient_id
+            left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
+            where visit_mast_slno=?`,
             [id],
             (error, results, fields) => {
                 if (error) {
@@ -237,9 +245,9 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
 
     searchpatientName: (data, callback) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name,
-            patient_address, patient_place, patient_pincode, patient_district,
-             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            `select  patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,old_uhid,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date,uhid
             from patient_registration
             where patient_name like ?`,
             [
@@ -256,9 +264,9 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
     },
     searchmobileNo: (data, callback) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name,
-            patient_address, patient_place, patient_pincode, patient_district,
-             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            `select patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,old_uhid,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date,uhid
             from patient_registration
             where patient_mobile like ?`,
             [
@@ -275,9 +283,9 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
     },
     searchAddress: (data, callback) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name,
-            patient_address, patient_place, patient_pincode, patient_district,
-             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            `select  patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,old_uhid,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date,uhid
             from patient_registration
             where patient_address like ?`,
             [
@@ -294,9 +302,9 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
     },
     searchById: (data, callback) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name,
-            patient_address, patient_place, patient_pincode, patient_district,
-             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            `select  patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,old_uhid,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date,uhid
             from patient_registration
             where patient_id like ?`,
             [
@@ -314,9 +322,9 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
 
     searchNameAddress: (data, callback) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name,
-            patient_address, patient_place, patient_pincode, patient_district,
-             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            `select  patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,old_uhid,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date,uhid
             from patient_registration
            where patient_name like ? and patient_address like ?`,
             [
@@ -334,9 +342,9 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
     },
     searchNameMobile: (data, callback) => {
         pool.query(
-            `select patient_slno, patient_id, salutation, patient_name,
-            patient_address, patient_place, patient_pincode, patient_district,
-             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date
+            `select  patient_id, salutation, patient_name,
+            patient_address, patient_place, patient_pincode, patient_district,uhid,old_uhid,
+             patient_mobile, patient_dob, patient_age, patient_month, patient_day, create_date, update_date,uhid
             from patient_registration
             where patient_name like ? and patient_mobile like ?`,
             [
@@ -349,6 +357,38 @@ left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
                     return callback(error);
                 }
                 return callback(null, results);
+            }
+        );
+    },
+    getAppoinmentVisitToday: (id, callBack) => {
+        pool.query(
+            `select visit_mast_slno, patient_id, visit_date,
+            visit_master.doctor_slno, token_no, fee,  status, cancel_status,
+            doctor_name,speciality_name
+            from visit_master
+        left join doctor_master on doctor_master.doctor_slno=visit_master.doctor_slno
+        left join speciality_master on speciality_master.speciality_slno=doctor_master.doctor_spectiality
+        where patient_id=? and visit_date=current_date() and cancel_status is null`,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
+            }
+        );
+    },
+    getLastRegistrationRenewal: (id, callBack) => {
+        pool.query(
+            `select max(visit_date) as lastregrenewal
+                   from visit_master 
+                   where patient_id=? and registration_fee=1 `,
+            [id],
+            (error, results, fields) => {
+                if (error) {
+                    callBack(error)
+                }
+                return callBack(null, results)
             }
         );
     },
